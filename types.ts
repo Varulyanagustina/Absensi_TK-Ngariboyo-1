@@ -1,4 +1,3 @@
-
 export interface SchoolSettings {
   id: string;
   school_name: string;
@@ -43,5 +42,5 @@ export interface TeacherAttendance {
   status: 'Hadir' | 'Sakit' | 'Izin' | 'Alfa';
   note?: string;
   date: string;
-  teacher?: Teacher;
+  teachers?: Teacher;
 }

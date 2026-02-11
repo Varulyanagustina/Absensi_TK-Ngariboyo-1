@@ -1,11 +1,13 @@
+-- TK ULTRA ATTENDANCE DATABASE SCHEMA
+-- Standar Zero-Data Ready
 
--- School Settings Table
+-- 1. School Settings Table
 CREATE TABLE IF NOT EXISTS school_settings (
   id TEXT PRIMARY KEY,
   school_name TEXT NOT NULL
 );
 
--- Classes Table
+-- 2. Classes Table
 CREATE TABLE IF NOT EXISTS classes (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
@@ -16,7 +18,7 @@ CREATE TABLE IF NOT EXISTS classes (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Students Table
+-- 3. Students Table
 CREATE TABLE IF NOT EXISTS students (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   nis TEXT UNIQUE NOT NULL,
@@ -26,7 +28,7 @@ CREATE TABLE IF NOT EXISTS students (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Attendance Table
+-- 4. Attendance Table
 CREATE TABLE IF NOT EXISTS attendance (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   student_id UUID REFERENCES students(id) ON DELETE CASCADE,
@@ -37,7 +39,7 @@ CREATE TABLE IF NOT EXISTS attendance (
   UNIQUE(student_id, date)
 );
 
--- Teachers Table
+-- 5. Teachers Table
 CREATE TABLE IF NOT EXISTS teachers (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   nip TEXT UNIQUE NOT NULL,
@@ -46,7 +48,7 @@ CREATE TABLE IF NOT EXISTS teachers (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Teacher Attendance Table
+-- 6. Teacher Attendance Table
 CREATE TABLE IF NOT EXISTS teacher_attendance (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   teacher_id UUID REFERENCES teachers(id) ON DELETE CASCADE,
@@ -56,19 +58,20 @@ CREATE TABLE IF NOT EXISTS teacher_attendance (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Initial Data (Seed Data)
+-- SEED DATA (DATA AWAL)
+-- 1. Settings Default
 INSERT INTO school_settings (id, school_name) 
 VALUES ('1', 'TK DIGITAL INDONESIA')
 ON CONFLICT (id) DO NOTHING;
 
--- Seed Classes
+-- 2. Seed 2 Kelas
 INSERT INTO classes (name, teacher_name, teacher_nip, headmaster_name, headmaster_nip)
 VALUES 
 ('Kelompok A (Bintang)', 'Siti Aminah, S.Pd', '198501012010012001', 'Hj. Ratna Sari, M.Pd', '197505051998032002'),
 ('Kelompok B (Matahari)', 'Budi Santoso, S.Pd', '198702022012011002', 'Hj. Ratna Sari, M.Pd', '197505051998032002')
 ON CONFLICT DO NOTHING;
 
--- Seed Students
+-- 3. Seed 5 Siswa
 INSERT INTO students (nis, name, class_name)
 VALUES 
 ('1001', 'Ahmad Fauzi', 'Kelompok A (Bintang)'),
@@ -78,7 +81,7 @@ VALUES
 ('1005', 'Zahra Amira', 'Kelompok B (Matahari)')
 ON CONFLICT DO NOTHING;
 
--- Seed Teachers
+-- 4. Seed 3 Guru
 INSERT INTO teachers (nip, name, role)
 VALUES 
 ('198501012010012001', 'Siti Aminah, S.Pd', 'Guru Kelas'),
@@ -86,7 +89,7 @@ VALUES
 ('197505051998032002', 'Hj. Ratna Sari, M.Pd', 'Kepala Sekolah')
 ON CONFLICT DO NOTHING;
 
--- Enable RLS
+-- RLS POLICIES (PUBLIC FOR DEMO)
 ALTER TABLE school_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE classes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE students ENABLE ROW LEVEL SECURITY;
@@ -94,7 +97,6 @@ ALTER TABLE attendance ENABLE ROW LEVEL SECURITY;
 ALTER TABLE teachers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE teacher_attendance ENABLE ROW LEVEL SECURITY;
 
--- Public Access (For Demo)
 CREATE POLICY "Public Read school_settings" ON school_settings FOR SELECT USING (true);
 CREATE POLICY "Public Write school_settings" ON school_settings FOR ALL USING (true);
 CREATE POLICY "Public Read classes" ON classes FOR SELECT USING (true);
